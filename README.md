@@ -1,106 +1,123 @@
 # CSP Guardian
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](#) [![Status](https://img.shields.io/badge/status-MVP-green)](#) [![Security](https://img.shields.io/badge/security-defensive%20lab-purple)](#)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](#requirements)
+[![Status](https://img.shields.io/badge/status-MVP-green)](#status)
+[![Security](https://img.shields.io/badge/security-defensive%20lab-purple)](#safe-use)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Website security header and iframe policy analyzer for CSP, cookies, CORS, and framing risks.
+Website security header and iframe policy analyzer. Inspects CSP, X-Frame-Options, cookies, CORS, and HSTS configuration to flag clickjacking, XSS, and framing risks.
 
-- **Portfolio group:** Product-style SaaS project
-- **Status:** MVP implemented, tested, committed, and pushed to GitHub
-- **GitHub:** https://github.com/SUDARSHANCHAUDHARI/CSPGuardian
-- **Local path:** `/Users/screencloudsudarshan/SUDARSHAN_CODE/sudarshan_repos/CyberSecurity/CSPGuardian`
+---
 
-## MVP Snapshot
+## Overview
 
-This repository includes a working MVP with safe sample data, deterministic detection or analysis logic, local tests, and generated output reports where relevant. It is ready for README/demo polish or deeper product work.
+CSP Guardian is a defensive analysis tool that fetches a URL's response headers, parses Content-Security-Policy directives, evaluates iframe and framing posture, and produces a risk-scored report with remediation hints. Useful for auditing security headers on production sites, kiosks, signage, and embedded webviews.
 
-## Safe Use
+The current MVP is a Python CLI. A FastAPI + React web dashboard is scaffolded under `apps/` for future development.
 
-This project is defensive and analysis-focused. Use only with logs, systems, repositories, and lab environments you own or have permission to assess.
+## Features
 
-## Core Features
+- Fetches and parses response security headers
+- Analyzes Content-Security-Policy directives
+- Detects iframe / framing policy gaps (clickjacking risk)
+- Checks cookie security flags (`Secure`, `HttpOnly`, `SameSite`)
+- Scores CORS and HSTS posture
+- Outputs JSON findings, risk summary, Markdown report, and triage handoff
 
-- CSP check
-- X-Frame-Options check
-- iframe compatibility
-- cookie security
-- mixed content detection
-- CORS risk explanation
+## Requirements
 
-## Suggested Stack
+- Python 3.10 or newer
+- Linux, macOS, or Windows
+- No third-party Python packages (standard library only)
+- Optional: Docker for the demo container
+- Network access for live URL scanning (sample mode works offline)
 
-FastAPI, React, Docker.
-
-## Status
-
-Working CLI MVP.
-
-
-## Install
+## Installation
 
 ```bash
+git clone https://github.com/SUDARSHANCHAUDHARI/CSPGuardian.git
+cd CSPGuardian
 pip install .
 ```
 
-This registers the `csp-guardian` command. Or run directly:
+This registers the `csp-guardian` CLI command.
+
+To run without installing:
 
 ```bash
 python3 main.py --help
 ```
 
-## Quick Start
+## Usage
 
-Analyze the included offline header fixture:
-
-```bash
-python3 -m apps.api.app.cli \
-  --fixture data/samples/insecure-site-headers.json \
-  --out-dir data/reports
-```
-
-Analyze a live URL when network access is available:
+Scan a target URL:
 
 ```bash
-python3 -m apps.api.app.cli --url https://example.com --out-dir data/reports
+python3 main.py --url https://example.com --out-dir reports
 ```
 
-Run tests:
+Generated outputs in `reports/`:
+
+- `headers.json` — captured response headers
+- `findings.json` — flagged policy gaps
+- `summary.json` — risk score and severity counts
+- `report.md` — Markdown header / CSP report
+- `triage.md` — analyst triage checklist
+
+## Project Structure
+
+```
+CSPGuardian/
+├── apps/
+│   ├── api/        FastAPI app scaffold (planned)
+│   └── web/        React/Next.js app scaffold (planned)
+├── data/
+│   ├── samples/    Safe sample headers for offline demo
+│   └── reports/    Example generated output
+├── docker/         Dockerfile + compose support
+├── docs/           Architecture, security notes, demo
+├── scripts/        Setup, seed, and run helpers
+├── tests/          Unit and integration tests
+├── main.py         CLI entrypoint
+├── pyproject.toml  Package metadata
+└── LICENSE
+```
+
+## Testing
 
 ```bash
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-## MVP Capabilities
-
-- Loads header fixtures or scans live URLs.
-- Checks Content-Security-Policy quality.
-- Checks iframe/clickjacking policy.
-- Checks HSTS and content-type hardening headers.
-- Detects simple mixed-content references.
-- Explains risky CORS combinations.
-- Grades the scanned site with a risk score and letter grade.
-- Builds iframe compatibility posture for embed/clickjacking review.
-- Writes JSON scan data, findings, summary, header matrix, remediation plan, and a Markdown report.
-
-## Demo Artifacts
-
-- [Architecture](docs/ARCHITECTURE.md)
-- [Security notes](docs/SECURITY_NOTES.md)
-- [Demo walkthrough](docs/DEMO.md)
-- [Release notes](docs/RELEASE_NOTES.md)
-- [Sample report](data/reports/report.md)
-- [Sample remediation plan](data/reports/remediation-plan.json)
-- [Sample header matrix](data/reports/header-matrix.json)
-
 ## Docker Demo
 
 ```bash
-docker compose run --rm cspguardian-demo
+docker compose run --rm api
 ```
+
+## Safe Use
+
+This project is defensive and analysis-focused. Use only on websites, kiosks, and lab environments you own or have explicit written permission to assess.
+
+## Status
+
+Working Python CLI MVP. Web dashboard scaffold present but not yet implemented.
 
 ## Roadmap
 
-- Add FastAPI scan endpoint and React dashboard.
-- Add side-by-side before/after policy comparison.
-- Add CSP directive parser with source-level scoring.
-- Add exportable HTML/PDF report.
-- Prepare GitHub release `v0.1.0-mvp`.
+- Live HTTPS certificate inspection
+- Subresource Integrity (SRI) checks
+- Bulk URL scanning with concurrency
+- GitHub Actions integration for policy regression checks
+- Web dashboard for findings and remediation suggestions
+
+## License
+
+Released under the [MIT License](LICENSE). You are free to use, modify, and distribute this software with attribution.
+
+## Author
+
+**Sudarshan Chaudhari** — [SudarshanTechLabs](https://github.com/SUDARSHANCHAUDHARI)
+Bangkok, Thailand
+
+For inquiries: open an issue on [GitHub](https://github.com/SUDARSHANCHAUDHARI/CSPGuardian/issues).
